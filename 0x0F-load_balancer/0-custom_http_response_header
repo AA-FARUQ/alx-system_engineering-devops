@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
+# This script duplicates web-01 configuration to web-02 and adds a custom HTTP header to Nginx responses.
 
-# duplicate web-01 to web-02
-# these scripts are an upgrade from the web-server scripts...
-
-# Uncomment to see the script run in action
-#set -x
+set -euo pipefail
 
 echo -e "Updating and doing some minor checks...\n"
 
@@ -76,10 +73,10 @@ server {
     }
 }"
 
-# Apply server configuration
+# Apply the server configuration
 echo "$server_config" | sudo tee /etc/nginx/sites-enabled/default >/dev/null
 
-# Check if nginx service is running and restart if necessary
+# Check if nginx service is running and restart if necessary.
 if sudo systemctl is-active --quiet nginx; then
     sudo systemctl restart nginx
 else
