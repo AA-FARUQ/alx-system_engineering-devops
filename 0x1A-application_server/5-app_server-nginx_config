@@ -1,46 +1,29 @@
 server {
-	listen 80 default_server;
-	listen [::]:80 ipv6only=on default_server;
-	server_name localhost 35.231.33.237;
+    listen 80;
+    server_name _;
 
-	root /home/ubuntu/AirBnB_clone_v4/web_dynamic;
+    location / {
+        proxy_pass http://127.0.0.1:5003/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
 
-	location /hbnb_static/ {
-		alias /data/web_static/current/;
-		autoindex off;
-	}
+        # Include any additional headers or settings as needed
+    }
 
-	index index.html index.htm index.nginx-debian.html;
-	rewrite ^/redirect_me https://github.com/luischaparroc permanent;
+    location /static/ {
+        alias /path/to/your/AirBnB_clone_v4/web_dynamic/static/;
+        expires 30d;
+        access_log off;
+    }
 
-	error_page 404 /custom_404.html;
+    # Adjust the IP address in the script as needed
+    location /static/scripts/2-hbnb.js {
+        alias /path/to/your/AirBnB_clone_v4/web_dynamic/static/scripts/2-hbnb.js;
+        expires max;
+        access_log off;
+    }
 
-	location = /custom_404.html {
-		root /usr/share/nginx/html;
-		internal;
-	}
-
-	location /airbnb-onepage/ {
-		include proxy_params;
-                proxy_pass http://0.0.0.0:5000/airbnb-onepage/;
-        }
-
-	location /airbnb-dynamic/number_odd_or_even/ {
-		include proxy_params;
-		proxy_pass http://0.0.0.0:5001/number_odd_or_even/;
-	}
-
-	location /static {
-        }
-
-	location /api/ {
-		include proxy_params;
-		proxy_pass http://0.0.0.0:5002/api/;
-	}	
-
-	location / {
-		include proxy_params;
-		proxy_pass http://0.0.0.0:5003/2-hbnb/;
-	}
-
+    # Additional location blocks for other static files if needed
 }
